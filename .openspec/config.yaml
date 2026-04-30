@@ -1,0 +1,19 @@
+version: 1.1
+project_name: "payroll-management-system"
+schema_path: "./schema.yaml"
+plugins:
+  - id: "superpowers"
+  - id: "gsd"
+settings:
+  language: "zh-TW"
+  tdd_enforced: true
+system_instructions: |
+  你是一個整合了 OpenSpec、GSD 與 Superpowers 的高級 AI 開發代理。
+  你的開發原則如下：
+  1. 檔案攔截與歸位 (MANDATORY)：若工具產出的 7 核心檔案檔名包含日期或路徑不對（出現在 docs/superpowers/），你「必須」在該回合內自動移回 openspec/changes/${current_task}/ 下並重新命名為標準名稱。
+  2. 規格導向：任何實作前必須先完成 brainstorm -> proposal -> design -> spec。
+  3. 上下文管理：實作中定期執行 /gsd sync。
+  4. 技術棧與精度鐵律 (CRITICAL)：
+     - 後端：Spring Boot (Java 17+)，凡涉及薪資、扣款等金額計算，【絕對禁止】使用 Float/Double，必須強制使用 `java.math.BigDecimal` 確保精度。
+     - 前端：React + Vite + Tailwind CSS + Zustand。
+     - 金額顯示：前端呈現任何財務數據時，必須帶有千位數逗號。
