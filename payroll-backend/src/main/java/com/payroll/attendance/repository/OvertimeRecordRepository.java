@@ -29,4 +29,11 @@ public interface OvertimeRecordRepository extends JpaRepository<OvertimeRecord, 
                                                                  @Param("startDate") LocalDate startDate,
                                                                  @Param("endDate") LocalDate endDate,
                                                                  org.springframework.data.domain.Pageable pageable);
+
+    @Query("SELECT COALESCE(SUM(o.overtimePay), 0) FROM OvertimeRecord o WHERE " +
+           "o.employee.id = :employeeId AND o.overtimeDate BETWEEN :startDate AND :endDate " +
+           "AND o.status = 'APPROVED'")
+    BigDecimal sumApprovedPayByEmployeeAndPeriod(@Param("employeeId") Long employeeId,
+                                                  @Param("startDate") LocalDate startDate,
+                                                  @Param("endDate") LocalDate endDate);
 }

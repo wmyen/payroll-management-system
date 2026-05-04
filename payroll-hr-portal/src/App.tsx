@@ -9,6 +9,9 @@ import AttendanceList from './pages/attendance/AttendanceList';
 import LeaveManagement from './pages/leaves/LeaveManagement';
 import OvertimeManagement from './pages/overtime/OvertimeManagement';
 import HolidayList from './pages/holidays/HolidayList';
+import PayrollPeriodList from './pages/payroll/PayrollPeriodList';
+import PayrollSummary from './pages/payroll/PayrollSummary';
+import PayrollRecordDetailPage from './pages/payroll/PayrollRecordDetail';
 
 function Dashboard() {
   return <div className="text-gray-600">歡迎使用薪資管理系統</div>;
@@ -35,6 +38,9 @@ export default function App() {
           <Route path="leaves" element={<LeaveManagement />} />
           <Route path="overtime" element={<OvertimeManagement />} />
           <Route path="holidays" element={<HolidayList />} />
+          <Route path="payroll/periods" element={<PayrollPeriodList />} />
+          <Route path="payroll/summary" element={<PayrollSummary />} />
+          <Route path="payroll/records/:id" element={<PayrollRecordDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

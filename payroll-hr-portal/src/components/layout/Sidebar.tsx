@@ -13,6 +13,11 @@ const attendanceItems = [
   { to: '/holidays', label: '假日管理' },
 ];
 
+const payrollItems = [
+  { to: '/payroll/periods', label: '薪資期間' },
+  { to: '/payroll/summary', label: '薪資總表' },
+];
+
 export default function Sidebar() {
   return (
     <aside className="w-48 bg-gray-800 text-white min-h-screen p-4">
@@ -32,6 +37,18 @@ export default function Sidebar() {
         ))}
         <div className="mt-4 mb-2 px-3 text-xs text-gray-400 uppercase tracking-wider">考勤管理</div>
         {attendanceItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `block px-3 py-2 rounded ${isActive ? 'bg-blue-600' : 'hover:bg-gray-700'}`
+            }
+          >
+            {item.label}
+          </NavLink>
+        ))}
+        <div className="mt-4 mb-2 px-3 text-xs text-gray-400 uppercase tracking-wider">薪資管理</div>
+        {payrollItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

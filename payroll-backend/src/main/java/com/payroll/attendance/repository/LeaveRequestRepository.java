@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long> {
 
@@ -25,4 +27,11 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Long
                               @Param("startDate") LocalDate startDate,
                               @Param("endDate") LocalDate endDate,
                               Pageable pageable);
+
+    @Query("SELECT l FROM LeaveRequest l WHERE " +
+           "l.employee.id = :employeeId AND l.status = 'APPROVED' AND " +
+           "l.startDate <= :endDate AND l.endDate >= :startDate")
+    List<LeaveRequest> findApprovedInRange(@Param("employeeId") Long employeeId,
+                                            @Param("startDate") LocalDate startDate,
+                                            @Param("endDate") LocalDate endDate);
 }
