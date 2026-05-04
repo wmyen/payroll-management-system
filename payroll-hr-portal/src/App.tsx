@@ -3,6 +3,7 @@ import { useAuthStore } from './stores/authStore';
 import MainLayout from './components/layout/MainLayout';
 import Login from './pages/Login';
 import EmployeeList from './pages/employees/EmployeeList';
+import EmployeeForm from './pages/employees/EmployeeForm';
 
 function Dashboard() {
   return <div className="text-gray-600">歡迎使用薪資管理系統</div>;
@@ -22,6 +23,8 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
           <Route path="employees" element={<EmployeeList />} />
+          <Route path="employees/new" element={<EmployeeForm />} />
+          <Route path="employees/:id" element={<EmployeeForm />} />
         </Route>
       </Routes>
     </BrowserRouter>
