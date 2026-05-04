@@ -5,6 +5,10 @@ import Login from './pages/Login';
 import EmployeeList from './pages/employees/EmployeeList';
 import EmployeeForm from './pages/employees/EmployeeForm';
 import DepartmentTree from './pages/departments/DepartmentTree';
+import AttendanceList from './pages/attendance/AttendanceList';
+import LeaveManagement from './pages/leaves/LeaveManagement';
+import OvertimeManagement from './pages/overtime/OvertimeManagement';
+import HolidayList from './pages/holidays/HolidayList';
 
 function Dashboard() {
   return <div className="text-gray-600">歡迎使用薪資管理系統</div>;
@@ -27,6 +31,10 @@ export default function App() {
           <Route path="employees/new" element={<EmployeeForm />} />
           <Route path="employees/:id" element={<EmployeeForm />} />
           <Route path="departments" element={<DepartmentTree />} />
+          <Route path="attendance" element={<AttendanceList />} />
+          <Route path="leaves" element={<LeaveManagement />} />
+          <Route path="overtime" element={<OvertimeManagement />} />
+          <Route path="holidays" element={<HolidayList />} />
         </Route>
       </Routes>
     </BrowserRouter>

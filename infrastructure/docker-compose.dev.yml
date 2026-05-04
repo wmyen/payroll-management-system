@@ -4,4 +4,4 @@ services:
       file: docker-compose.yml
       service: mysql
     ports:
-      - "3306:3306"
+      - "3307:3306"
