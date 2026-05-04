@@ -1,0 +1,25 @@
+CREATE TABLE emp_salary_structure (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    employee_id BIGINT NOT NULL,
+    base_salary DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    effective_date DATE NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(100),
+    updated_by VARCHAR(100),
+    CONSTRAINT fk_salary_employee FOREIGN KEY (employee_id) REFERENCES emp_employee(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE emp_allowance (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    salary_structure_id BIGINT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    version BIGINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    created_by VARCHAR(100),
+    updated_by VARCHAR(100),
+    CONSTRAINT fk_allowance_salary FOREIGN KEY (salary_structure_id) REFERENCES emp_salary_structure(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
