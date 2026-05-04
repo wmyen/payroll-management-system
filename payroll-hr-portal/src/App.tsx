@@ -4,6 +4,7 @@ import MainLayout from './components/layout/MainLayout';
 import Login from './pages/Login';
 import EmployeeList from './pages/employees/EmployeeList';
 import EmployeeForm from './pages/employees/EmployeeForm';
+import DepartmentTree from './pages/departments/DepartmentTree';
 
 function Dashboard() {
   return <div className="text-gray-600">歡迎使用薪資管理系統</div>;
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="employees" element={<EmployeeList />} />
           <Route path="employees/new" element={<EmployeeForm />} />
           <Route path="employees/:id" element={<EmployeeForm />} />
+          <Route path="departments" element={<DepartmentTree />} />
         </Route>
       </Routes>
     </BrowserRouter>
