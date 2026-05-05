@@ -87,7 +87,7 @@
 |---|---|---|
 | HR Portal | http://localhost:3000 | PASS — login, sidebar, all pages render |
 | ESS Portal | http://localhost:3001/ess/ | PASS — login, dashboard, paystubs, profile |
-| Backend API | http://localhost:8080 | PASS — login endpoint returns JWT with employeeId + role |
+| Backend API | http://localhost:8080/api/v1/auth/login | PASS — POST login endpoint returns JWT with employeeId + role (僅 API，無前端畫面) |
 
 ## 5. Project Stats
 
