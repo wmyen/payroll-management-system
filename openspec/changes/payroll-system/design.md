@@ -47,32 +47,32 @@
 
 ## 2. 分階段開發計畫
 
-### Phase 1: 人事主檔管理
+### Phase 1: 人事主檔管理 ✅ (已完成)
 - 員工個人檔案 CRUD
 - 部門/組織架構管理
 - 薪資結構設定（底薪、津貼、扣款項目）
 - 勞動合約類型/職位級別
 - RBAC 角色權限（ADMIN / HR / EMPLOYEE）
 
-### Phase 2: 考勤與工時管理
+### Phase 2: 考勤與工時管理 ✅ (已完成)
 - 出勤記錄（打卡資料同步）
 - 請假管理（特休/病假/事假/曠職）
 - 假別餘額追蹤
 - 加班費計算（勞基法：平日 1.33x/1.66x、假日 2x）
 
-### Phase 3: 薪資核算引擎（核心）
+### Phase 3: 薪資核算引擎（核心） ✅ (已完成)
 - 月薪批次處理（應發/應扣自動計算）
-- 勞健保費計算（雇主/員工負擔比例）
+- 勞健保費計算（雇主/員工負擔比例，DB 驅動費率）
 - 勞退自提（6% 上限）
 - 所得稅預扣（累進稅率）
-- 月中到職/離職/調薪比例計算
 - 薪資條（Paystub）產生
+- 自訂薪資項目（收入/扣除）
 
-### Phase 4: 稅務與合規管理
-- 扣繳稅率表管理
-- 勞健保費率版本控制
-- 年度扣繳憑單產出
-- 法規變更自動適應機制
+### Phase 4: 稅務與合規管理 ✅ (已完成)
+- 扣繳稅率表管理（年度級距 CRUD）
+- 勞健保費率版本控制（生效日機制，取代 hardcoded 常數）
+- 年度扣繳憑單產出（批次聚合薪資紀錄）
+- 合規管理前端頁面（保險費率、稅率級距、扣繳憑單）
 
 ### Phase 5: 報表分析與支付
 - 銀行自動轉帳檔（Autopay）
@@ -88,13 +88,13 @@
 
 ### 階段依賴關係
 ```
-Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4
+Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
                                 │         │
                                 ▼         ▼
                             Phase 5    Phase 6
 ```
-- Phase 1 是基礎，必須先完成
-- Phase 6 的薪資單查詢需等 Phase 3，但請假/加班可提前開發
+- Phase 1-4 已完成
+- Phase 5、6 可平行開發
 
 ## 3. 資料庫設計
 
@@ -110,11 +110,18 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4
 - `att_record` — 出勤記錄（employee_id, record_date, clock_in, clock_out, overtime_hours）
 - `att_leave_request` — 請假申請（employee_id, leave_type, start_date, end_date, status, approver_id）
 - `att_leave_balance` — 假別餘額（employee_id, leave_type, total_days, used_days）
+- `att_overtime_record` — 加班紀錄（employee_id, overtime_date, start_time, end_time, hours, overtime_type, overtime_pay, status）
+- `att_holiday` — 國定假日（date, name, type）
 
 **薪資核算 (pay_)**
-- `pay_payroll_run` — 薪資批次（run_id, period_year, period_month, status, run_date）
-- `pay_payroll_detail` — 薪資明細（run_id, employee_id, gross_pay, total_deductions, net_pay）
-- `pay_payroll_item` — 薪資項目（detail_id, item_type EARN/DEDUCT, category, amount）
+- `pay_payroll_period` — 薪資期間（year, month, start_date, end_date, pay_date, status DRAFT/PROCESSING/CONFIRMED/LOCKED）
+- `pay_payroll_record` — 薪資紀錄（period_id, employee_id, 本薪/津貼/加班費/其他收入/應稅合計, 勞保/健保/所得稅/請假扣薪/其他扣項/扣項合計, 實領, 雇主勞保/健保/勞退/總成本, status, remark）
+- `pay_payroll_item` — 自訂薪資項目（payroll_record_id, item_type EARNING/DEDUCTION, name, amount）
+- `pay_tax_bracket` — 所得稅級距（year, bracket_start, bracket_end, rate, quick_deduction）
+
+**合規管理 (pay_)**
+- `pay_insurance_rate` — 勞健保費率版本（effective_date, description, 勞保/健保/勞退各項費率與負擔比例）
+- `pay_withholding_statement` — 年度扣繳憑單（year, employee_id, 全年各項合計金額, month_count, status DRAFT/CONFIRMED）
 
 ### 3.2 資料安全
 - 金額欄位：`DECIMAL(15,2)`，**絕對禁止** FLOAT/DOUBLE
@@ -127,6 +134,12 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4
 ### 3.3 遷移管理
 - Flyway 管理 DB migration
 - 版本化 SQL 腳本：`payroll-backend/src/main/resources/db/migration/`
+  - V1: emp_department + emp_employee（Phase 1）
+  - V2: emp_salary_structure + emp_allowance（Phase 1）
+  - V3: auth 相關表（Phase 1）
+  - V4: att_ 考勤表 + att_overtime_record + att_holiday（Phase 2）
+  - V5: pay_ 薪資表 + pay_tax_bracket 含 2025 稅率種子資料（Phase 3）
+  - V6: pay_insurance_rate + pay_withholding_statement 含 2025 費率種子資料（Phase 4）
 
 ## 4. API 設計
 
@@ -160,16 +173,29 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4
 - `GET /api/v1/overtime` — 加班記錄
 
 **薪資核算 (Phase 3)**
-- `POST /api/v1/payroll/runs` — 建立薪資批次
-- `GET /api/v1/payroll/runs/{id}` — 批次詳情
-- `PUT /api/v1/payroll/runs/{id}/confirm` — 確認鎖定
-- `GET /api/v1/payroll/runs/{id}/paystubs` — 薪資條列表
-- `GET /api/v1/payroll/paystubs/{id}` — 單一薪資條
+- `GET /api/v1/payroll/periods` — 薪資期間列表
+- `POST /api/v1/payroll/periods` — 建立期間
+- `PUT /api/v1/payroll/periods/{id}` — 更新期間
+- `POST /api/v1/payroll/periods/{id}/calculate` — 批次計算
+- `POST /api/v1/payroll/periods/{id}/confirm` — 確認鎖定
+- `GET /api/v1/payroll/records?periodId=` — 薪資紀錄列表
+- `GET /api/v1/payroll/records/{id}` — 薪資紀錄明細（含員工資訊+自訂項目）
+- `PUT /api/v1/payroll/records/{id}` — 手動調整
+- `GET /api/v1/payroll/records/{recordId}/items` — 自訂項目列表
+- `POST /api/v1/payroll/records/{recordId}/items` — 新增自訂項目
+- `DELETE /api/v1/payroll/items/{id}` — 刪除自訂項目
+- `GET /api/v1/payroll/tax-brackets?year=` — 所得稅級距查詢
+- `POST /api/v1/payroll/tax-brackets` — 批次建立稅率
 
 **稅務合規 (Phase 4)**
-- `GET /api/v1/tax/withholding-tables` — 扣繳稅率表
-- `PUT /api/v1/tax/withholding-tables` — 更新稅率表
-- `GET /api/v1/tax/annual-statements` — 年度扣繳憑單
+- `GET /api/v1/compliance/insurance-rates` — 勞健保費率版本列表
+- `GET /api/v1/compliance/insurance-rates/{id}` — 單一版本
+- `POST /api/v1/compliance/insurance-rates` — 新增費率版本
+- `GET /api/v1/compliance/withholding?year=` — 年度扣繳憑單列表
+- `POST /api/v1/compliance/withholding/generate` — 批次產出年度憑單
+- `GET /api/v1/compliance/withholding/{id}` — 單一憑單（含員工資訊）
+- `POST /api/v1/compliance/withholding/{id}/confirm` — 確認單筆
+- `POST /api/v1/compliance/withholding/confirm-all` — 批次確認
 
 **報表 (Phase 5)**
 - `GET /api/v1/reports/payroll-summary` — 薪資總表
@@ -182,9 +208,13 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4
 ### 5.1 雙 Portal 結構
 
 **payroll-hr-portal**（HR 管理後台）
-- Pages: Employees, Attendance, Payroll, Compliance, Reports
-- Stores: authStore, employeeStore, payrollStore
+- 人事管理：EmployeeList, EmployeeForm, DepartmentTree
+- 考勤管理：AttendanceList, LeaveManagement, OvertimeManagement, HolidayList
+- 薪資管理：PayrollPeriodList, PayrollSummary, PayrollRecordDetail
+- 合規管理：InsuranceRatePage, TaxBracketPage, WithholdingPage, WithholdingDetail
+- Stores: authStore
 - 預設路由 `/`
+- Sidebar 分四區塊：人事、考勤、薪資、合規
 
 **payroll-ess-portal**（員工自助服務）
 - Pages: Paystubs, Leaves, Overtime, Profile
