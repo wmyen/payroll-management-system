@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { attendanceApi, AttendanceRecord } from '../../api/attendance';
+import { attendanceApi, type AttendanceRecord as AttendanceData } from '../../api/attendance';
 
 const statusLabels: Record<string, string> = {
   NORMAL: '正常', LATE: '遲到', EARLY_LEAVE: '早退',
@@ -12,7 +12,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AttendanceList() {
-  const [records, setRecords] = useState<AttendanceRecord[]>([]);
+  const [records, setRecords] = useState<AttendanceData[]>([]);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [filters, setFilters] = useState({ startDate: '', endDate: '', departmentId: '' });

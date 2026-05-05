@@ -1,5 +1,5 @@
 import client from './client';
-import { ApiResponse, Page } from '../types';
+import type { ApiResponse, Page } from '../types';
 
 export interface Holiday {
   id: number;

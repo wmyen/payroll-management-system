@@ -1,5 +1,5 @@
 import client from './client';
-import { ApiResponse } from '../types';
+import type { ApiResponse } from '../types';
 
 export interface PayrollPeriod {
   id: number;

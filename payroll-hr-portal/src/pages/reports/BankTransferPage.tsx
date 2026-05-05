@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { payrollApi, PayrollPeriod, PayrollRecord } from '../../api/payroll';
+import { payrollApi, type PayrollPeriod, type PayrollRecord } from '../../api/payroll';
 import { reportApi } from '../../api/payroll';
 import client from '../../api/client';
 

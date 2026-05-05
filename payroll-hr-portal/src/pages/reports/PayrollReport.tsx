@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { payrollApi, PayrollPeriod } from '../../api/payroll';
-import { reportApi, PayrollSummaryReport } from '../../api/payroll';
+import { payrollApi, type PayrollPeriod } from '../../api/payroll';
+import { reportApi, type PayrollSummaryReport } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 

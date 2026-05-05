@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { reportApi, OvertimeTrendReport } from '../../api/payroll';
+import { reportApi, type OvertimeTrendReport as OvertimeTrendData } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
 export default function OvertimeTrendReport() {
   const [year, setYear] = useState(new Date().getFullYear());
-  const [report, setReport] = useState<OvertimeTrendReport | null>(null);
+  const [report, setReport] = useState<OvertimeTrendData | null>(null);
 
   useEffect(() => { fetchReport(); }, [year]);
 

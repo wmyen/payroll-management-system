@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { overtimeApi, OvertimeRecord } from '../../api/overtime';
+import { overtimeApi, type OvertimeRecord } from '../../api/overtime';
 import { formatMoney } from '../../utils/formatMoney';
 
 const typeLabels: Record<string, string> = { WORKDAY: '工作日', REST_DAY: '休息日', HOLIDAY: '國定假日' };

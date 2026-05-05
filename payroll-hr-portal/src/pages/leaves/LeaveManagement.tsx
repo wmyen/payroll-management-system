@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { leaveApi, LeaveRequest, LeaveBalance } from '../../api/leaves';
+import { leaveApi, type LeaveRequest, type LeaveBalance } from '../../api/leaves';
 
 const leaveTypeLabels: Record<string, string> = {
   ANNUAL: '特休', SICK: '病假', PERSONAL: '事假', MARRIAGE: '婚假',

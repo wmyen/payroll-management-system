@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { reportApi, DepartmentCostReport } from '../../api/payroll';
+import { reportApi, type DepartmentCostReport as DepartmentCostData } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
 export default function DepartmentCostReport() {
   const [year, setYear] = useState(new Date().getFullYear());
   const [month, setMonth] = useState<number | ''>('');
-  const [report, setReport] = useState<DepartmentCostReport | null>(null);
+  const [report, setReport] = useState<DepartmentCostData | null>(null);
 
   useEffect(() => { fetchReport(); }, [year, month]);
 

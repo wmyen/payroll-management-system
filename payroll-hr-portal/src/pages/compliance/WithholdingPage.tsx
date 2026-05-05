@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { complianceApi, WithholdingStatement } from '../../api/payroll';
+import { complianceApi, type WithholdingStatement } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 

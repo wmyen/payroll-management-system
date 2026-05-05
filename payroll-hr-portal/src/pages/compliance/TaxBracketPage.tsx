@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { payrollApi, TaxBracket } from '../../api/payroll';
+import { payrollApi, type TaxBracket } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 const pct = (n: number) => (n * 100).toFixed(1) + '%';

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { holidayApi, Holiday } from '../../api/holidays';
+import { holidayApi, type Holiday } from '../../api/holidays';
 
 const statusColors: Record<string, string> = {
   HOLIDAY: 'bg-green-100 text-green-800',

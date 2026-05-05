@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { complianceApi, WithholdingDetail } from '../../api/payroll';
+import { complianceApi, type WithholdingDetail as WithholdingDetailData } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
 export default function WithholdingDetailPage() {
   const { id } = useParams();
-  const [detail, setDetail] = useState<WithholdingDetail | null>(null);
+  const [detail, setDetail] = useState<WithholdingDetailData | null>(null);
 
   useEffect(() => {
     if (id) fetchDetail();

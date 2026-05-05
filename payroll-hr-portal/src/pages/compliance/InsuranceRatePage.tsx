@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { complianceApi, InsuranceRate } from '../../api/payroll';
+import { complianceApi, type InsuranceRate } from '../../api/payroll';
 
 const pct = (n: number) => (n * 100).toFixed(2) + '%';
 

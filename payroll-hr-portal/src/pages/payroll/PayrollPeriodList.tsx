@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { payrollApi, PayrollPeriod } from '../../api/payroll';
+import { payrollApi, type PayrollPeriod } from '../../api/payroll';
 
 const statusLabels: Record<string, { text: string; cls: string }> = {
   DRAFT: { text: '草稿', cls: 'bg-gray-100 text-gray-700' },

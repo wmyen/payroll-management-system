@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { payrollApi, PayrollRecordDetail, PayrollItem } from '../../api/payroll';
+import { payrollApi, type PayrollRecordDetail as PayrollRecordDetailData, type PayrollItem } from '../../api/payroll';
 
 const fmt = (n: number) => n.toLocaleString('zh-TW', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
 export default function PayrollRecordDetailPage() {
   const { id } = useParams();
-  const [detail, setDetail] = useState<PayrollRecordDetail | null>(null);
+  const [detail, setDetail] = useState<PayrollRecordDetailData | null>(null);
   const [showItemForm, setShowItemForm] = useState(false);
   const [itemType, setItemType] = useState('EARNING');
   const [itemName, setItemName] = useState('');
