@@ -41,6 +41,7 @@
 | 前端框架 | React + Vite + Tailwind CSS + Zustand |
 | 資料庫 | MySQL 8.x |
 | DB Migration | Flyway |
+| Excel 匯出 | Apache POI 5.2.5 |
 | 認證 | Spring Security + JWT |
 | 容器 | Docker Compose |
 | 反向代理 | Nginx |
@@ -74,11 +75,12 @@
 - 年度扣繳憑單產出（批次聚合薪資紀錄）
 - 合規管理前端頁面（保險費率、稅率級距、扣繳憑單）
 
-### Phase 5: 報表分析與支付
-- 銀行自動轉帳檔（Autopay）
-- 薪資總表 / 部門分析報表
-- 人事成本佔比 / 加班費趨勢分析
-- 匯出功能（Excel / PDF）
+### Phase 5: 報表分析與支付 ✅ (已完成)
+- 薪資總表報表（依期間，按部門分組彙總）
+- 部門成本分析（年度/月份篩選，成本佔比計算）
+- 加班費趨勢分析（月度長條圖，年度統計）
+- 銀行自動轉帳檔（CSV 格式下載，含解密銀行帳號）
+- Excel 匯出（Apache POI 產生 .xlsx）
 
 ### Phase 6: 員工自助服務
 - 當月及歷史薪資單查詢
@@ -93,8 +95,8 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
                                 ▼         ▼
                             Phase 5    Phase 6
 ```
-- Phase 1-4 已完成
-- Phase 5、6 可平行開發
+- Phase 1-5 已完成
+- Phase 6 可獨立開發
 
 ## 3. 資料庫設計
 
@@ -198,10 +200,11 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
 - `POST /api/v1/compliance/withholding/confirm-all` — 批次確認
 
 **報表 (Phase 5)**
-- `GET /api/v1/reports/payroll-summary` — 薪資總表
-- `GET /api/v1/reports/department-cost` — 部門成本分析
-- `GET /api/v1/reports/bank-transfer` — 銀行轉帳檔
-- `GET /api/v1/reports/export/{format}` — 匯出（xlsx/pdf）
+- `GET /api/v1/reports/payroll-summary?periodId=` — 薪資總表（部門分組彙總）
+- `GET /api/v1/reports/department-cost?year=&month=` — 部門成本分析（含佔比）
+- `GET /api/v1/reports/overtime-trend?year=` — 加班費趨勢（月度統計）
+- `GET /api/v1/reports/bank-transfer?periodId=` — 銀行轉帳檔下載（CSV）
+- `GET /api/v1/reports/export/payroll?periodId=` — 薪資總表 Excel 匯出
 
 ## 5. 前端架構
 
@@ -212,9 +215,10 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
 - 考勤管理：AttendanceList, LeaveManagement, OvertimeManagement, HolidayList
 - 薪資管理：PayrollPeriodList, PayrollSummary, PayrollRecordDetail
 - 合規管理：InsuranceRatePage, TaxBracketPage, WithholdingPage, WithholdingDetail
+- 報表分析：PayrollReport, DepartmentCostReport, OvertimeTrendReport, BankTransferPage
 - Stores: authStore
 - 預設路由 `/`
-- Sidebar 分四區塊：人事、考勤、薪資、合規
+- Sidebar 分五區塊：人事、考勤、薪資、合規、報表
 
 **payroll-ess-portal**（員工自助服務）
 - Pages: Paystubs, Leaves, Overtime, Profile
