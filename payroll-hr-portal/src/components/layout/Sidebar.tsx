@@ -18,6 +18,12 @@ const payrollItems = [
   { to: '/payroll/summary', label: '薪資總表' },
 ];
 
+const complianceItems = [
+  { to: '/compliance/insurance-rates', label: '勞健保費率' },
+  { to: '/compliance/tax-brackets', label: '所得稅級距' },
+  { to: '/compliance/withholding', label: '扣繳憑單' },
+];
+
 export default function Sidebar() {
   return (
     <aside className="w-48 bg-gray-800 text-white min-h-screen p-4">
@@ -49,6 +55,18 @@ export default function Sidebar() {
         ))}
         <div className="mt-4 mb-2 px-3 text-xs text-gray-400 uppercase tracking-wider">薪資管理</div>
         {payrollItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `block px-3 py-2 rounded ${isActive ? 'bg-blue-600' : 'hover:bg-gray-700'}`
+            }
+          >
+            {item.label}
+          </NavLink>
+        ))}
+        <div className="mt-4 mb-2 px-3 text-xs text-gray-400 uppercase tracking-wider">合規管理</div>
+        {complianceItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

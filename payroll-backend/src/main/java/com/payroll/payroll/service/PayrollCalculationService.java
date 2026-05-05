@@ -1,16 +1,15 @@
 package com.payroll.payroll.service;
 
 import com.payroll.attendance.domain.LeaveRequest;
-import com.payroll.attendance.domain.LeaveType;
 import com.payroll.attendance.repository.LeaveRequestRepository;
 import com.payroll.attendance.repository.OvertimeRecordRepository;
 import com.payroll.employee.domain.Employee;
 import com.payroll.employee.domain.EmployeeStatus;
 import com.payroll.employee.repository.EmployeeRepository;
+import com.payroll.payroll.domain.InsuranceRate;
 import com.payroll.payroll.domain.PayrollItem;
 import com.payroll.payroll.domain.PayrollRecord;
 import com.payroll.payroll.domain.PayrollRecordStatus;
-import com.payroll.payroll.domain.TaxBracket;
 import com.payroll.payroll.repository.PayrollItemRepository;
 import com.payroll.payroll.repository.PayrollRecordRepository;
 import com.payroll.salary.domain.SalaryStructure;
@@ -31,18 +30,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PayrollCalculationService {
 
-    // Insurance rates
-    private static final BigDecimal LABOR_RATE = new BigDecimal("0.11");
-    private static final BigDecimal EMPLOYMENT_INSURANCE_RATE = new BigDecimal("0.01");
-    private static final BigDecimal OCCUPATIONAL_RATE = new BigDecimal("0.002");
-    private static final BigDecimal TOTAL_EMPLOYEE_LABOR_SHARE = new BigDecimal("0.20");
-    private static final BigDecimal TOTAL_EMPLOYER_LABOR_SHARE = new BigDecimal("0.70");
-
-    private static final BigDecimal HEALTH_RATE = new BigDecimal("0.0517");
-    private static final BigDecimal HEALTH_EMPLOYEE_SHARE = new BigDecimal("0.30");
-    private static final BigDecimal HEALTH_EMPLOYER_SHARE = new BigDecimal("0.60");
-
-    private static final BigDecimal PENSION_RATE = new BigDecimal("0.06");
     private static final BigDecimal DAYS_PER_MONTH = new BigDecimal("30");
 
     private final PayrollRecordRepository payrollRecordRepository;
@@ -52,6 +39,7 @@ public class PayrollCalculationService {
     private final OvertimeRecordRepository overtimeRecordRepository;
     private final LeaveRequestRepository leaveRequestRepository;
     private final TaxBracketService taxBracketService;
+    private final InsuranceRateService insuranceRateService;
 
     @Transactional
     public List<PayrollRecord> calculateForPeriod(Long periodId, int year, int month,
@@ -133,15 +121,17 @@ public class PayrollCalculationService {
         // 4. Gross pay (before custom items)
         BigDecimal grossPay = baseSalary.add(totalAllowances).add(overtimePay);
 
-        // 5. Insurance
+        // 5. Insurance — lookup from database
+        InsuranceRate rate = insuranceRateService.getApplicableRate(periodEnd);
         BigDecimal insuredSalary = baseSalary;
+
         BigDecimal laborInsurance = insuredSalary
-                .multiply(LABOR_RATE.add(EMPLOYMENT_INSURANCE_RATE))
-                .multiply(TOTAL_EMPLOYEE_LABOR_SHARE)
+                .multiply(rate.getLaborRate().add(rate.getEmploymentInsuranceRate()))
+                .multiply(rate.getEmployeeLaborShare())
                 .setScale(0, RoundingMode.HALF_UP);
         BigDecimal healthInsurance = insuredSalary
-                .multiply(HEALTH_RATE)
-                .multiply(HEALTH_EMPLOYEE_SHARE)
+                .multiply(rate.getHealthRate())
+                .multiply(rate.getHealthEmployeeShare())
                 .setScale(0, RoundingMode.HALF_UP);
 
         // 6. Income tax
@@ -154,14 +144,14 @@ public class PayrollCalculationService {
 
         // 8. Employer costs
         BigDecimal employerLaborIns = insuredSalary
-                .multiply(LABOR_RATE.add(EMPLOYMENT_INSURANCE_RATE).add(OCCUPATIONAL_RATE))
-                .multiply(TOTAL_EMPLOYER_LABOR_SHARE)
+                .multiply(rate.getLaborRate().add(rate.getEmploymentInsuranceRate()).add(rate.getOccupationalRate()))
+                .multiply(rate.getEmployerLaborShare())
                 .setScale(0, RoundingMode.HALF_UP);
         BigDecimal employerHealthIns = insuredSalary
-                .multiply(HEALTH_RATE)
-                .multiply(HEALTH_EMPLOYER_SHARE)
+                .multiply(rate.getHealthRate())
+                .multiply(rate.getHealthEmployerShare())
                 .setScale(0, RoundingMode.HALF_UP);
-        BigDecimal employerPension = insuredSalary.multiply(PENSION_RATE)
+        BigDecimal employerPension = insuredSalary.multiply(rate.getPensionRate())
                 .setScale(0, RoundingMode.HALF_UP);
         BigDecimal totalEmployerCost = grossPay.add(employerLaborIns).add(employerHealthIns).add(employerPension);
 
@@ -184,7 +174,6 @@ public class PayrollCalculationService {
         BigDecimal totalDeduction = BigDecimal.ZERO;
 
         for (LeaveRequest leave : leaves) {
-            // Count days within the period
             LocalDate leaveStart = leave.getStartDate().isBefore(periodStart) ? periodStart : leave.getStartDate();
             LocalDate leaveEnd = leave.getEndDate().isAfter(periodEnd) ? periodEnd : leave.getEndDate();
 
@@ -198,27 +187,11 @@ public class PayrollCalculationService {
                         case PERSONAL -> dailyRate.multiply(daysInPeriod);
                         case SICK -> dailyRate.multiply(daysInPeriod)
                                 .multiply(new BigDecimal("0.5"));
-                        default -> BigDecimal.ZERO; // paid leave
+                        default -> BigDecimal.ZERO;
                     }
             );
         }
 
         return totalDeduction.setScale(0, RoundingMode.HALF_UP);
-    }
-
-    @Transactional
-    public PayrollRecord recalculateSingle(Long recordId) {
-        PayrollRecord record = payrollRecordRepository.findById(recordId)
-                .orElseThrow(() -> new EntityNotFoundException("Payroll record not found: " + recordId));
-        if (record.getStatus() == PayrollRecordStatus.CONFIRMED) {
-            throw new IllegalStateException("Cannot recalculate a confirmed record");
-        }
-
-        Employee employee = employeeRepository.findById(record.getEmployeeId())
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found"));
-
-        // We don't have period info here directly, use record's period
-        // The caller (controller) should provide year/month/periodStart/periodEnd
-        throw new UnsupportedOperationException("Use calculateForPeriod instead");
     }
 }

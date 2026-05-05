@@ -59,6 +59,55 @@ export interface TaxBracket {
   quickDeduction: number;
 }
 
+export interface InsuranceRate {
+  id: number;
+  effectiveDate: string;
+  description: string | null;
+  laborRate: number;
+  employmentInsuranceRate: number;
+  occupationalRate: number;
+  employeeLaborShare: number;
+  employerLaborShare: number;
+  healthRate: number;
+  healthEmployeeShare: number;
+  healthEmployerShare: number;
+  pensionRate: number;
+}
+
+export interface WithholdingStatement {
+  id: number;
+  year: number;
+  employeeId: number;
+  totalGross: number;
+  totalLaborInsurance: number;
+  totalHealthInsurance: number;
+  totalIncomeTax: number;
+  totalNetPay: number;
+  totalEmployerCost: number;
+  monthCount: number;
+  status: 'DRAFT' | 'CONFIRMED';
+}
+
+export interface WithholdingDetail {
+  statement: WithholdingStatement;
+  employee: { id: number; name: string; department: { name: string } | null };
+}
+
+export const complianceApi = {
+  // Insurance rates
+  listInsuranceRates: () => client.get<ApiResponse<InsuranceRate[]>>('/compliance/insurance-rates'),
+  getInsuranceRate: (id: number) => client.get<ApiResponse<InsuranceRate>>(`/compliance/insurance-rates/${id}`),
+  createInsuranceRate: (data: Omit<InsuranceRate, 'id'> & { effectiveDate: string; description?: string }) =>
+    client.post<ApiResponse<InsuranceRate>>('/compliance/insurance-rates', data),
+
+  // Withholding
+  listWithholding: (year: number) => client.get<ApiResponse<WithholdingStatement[]>>('/compliance/withholding', { params: { year } }),
+  generateWithholding: (year: number) => client.post<ApiResponse<WithholdingStatement[]>>('/compliance/withholding/generate', { year }),
+  getWithholding: (id: number) => client.get<ApiResponse<WithholdingDetail>>(`/compliance/withholding/${id}`),
+  confirmWithholding: (id: number) => client.post<ApiResponse<void>>(`/compliance/withholding/${id}/confirm`),
+  confirmAllWithholding: (year: number) => client.post<ApiResponse<void>>('/compliance/withholding/confirm-all', { year }),
+};
+
 export const payrollApi = {
   // Periods
   listPeriods: () => client.get<ApiResponse<PayrollPeriod[]>>('/payroll/periods'),

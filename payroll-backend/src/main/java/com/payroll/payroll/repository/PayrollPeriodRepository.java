@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface PayrollPeriodRepository extends JpaRepository<PayrollPeriod, Long> {
     Optional<PayrollPeriod> findByYearAndMonth(int year, int month);
     List<PayrollPeriod> findAllByOrderByYearDescMonthDesc();
+    List<PayrollPeriod> findByYear(int year);
 }

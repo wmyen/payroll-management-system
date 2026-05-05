@@ -12,6 +12,10 @@ import HolidayList from './pages/holidays/HolidayList';
 import PayrollPeriodList from './pages/payroll/PayrollPeriodList';
 import PayrollSummary from './pages/payroll/PayrollSummary';
 import PayrollRecordDetailPage from './pages/payroll/PayrollRecordDetail';
+import InsuranceRatePage from './pages/compliance/InsuranceRatePage';
+import TaxBracketPage from './pages/compliance/TaxBracketPage';
+import WithholdingPage from './pages/compliance/WithholdingPage';
+import WithholdingDetailPage from './pages/compliance/WithholdingDetail';
 
 function Dashboard() {
   return <div className="text-gray-600">歡迎使用薪資管理系統</div>;
@@ -41,6 +45,10 @@ export default function App() {
           <Route path="payroll/periods" element={<PayrollPeriodList />} />
           <Route path="payroll/summary" element={<PayrollSummary />} />
           <Route path="payroll/records/:id" element={<PayrollRecordDetailPage />} />
+          <Route path="compliance/insurance-rates" element={<InsuranceRatePage />} />
+          <Route path="compliance/tax-brackets" element={<TaxBracketPage />} />
+          <Route path="compliance/withholding" element={<WithholdingPage />} />
+          <Route path="compliance/withholding/:id" element={<WithholdingDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
