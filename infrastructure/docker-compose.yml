@@ -42,6 +42,13 @@ services:
     ports:
       - "3000:80"
 
+  ess-portal:
+    build:
+      context: ../payroll-ess-portal
+      dockerfile: Dockerfile
+    ports:
+      - "3001:80"
+
   nginx:
     image: nginx:alpine
     ports:
@@ -52,6 +59,7 @@ services:
     depends_on:
       - backend
       - hr-portal
+      - ess-portal
 
 volumes:
   mysql_data:

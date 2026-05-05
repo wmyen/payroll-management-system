@@ -82,11 +82,13 @@
 - 銀行自動轉帳檔（CSV 格式下載，含解密銀行帳號）
 - Excel 匯出（Apache POI 產生 .xlsx）
 
-### Phase 6: 員工自助服務
-- 當月及歷史薪資單查詢
-- 線上請假/加班申請（簽核流程）
-- 假別餘額查詢
-- 個人資料維護
+### Phase 6: 員工自助服務 ✅ (已完成)
+- 當月及歷史薪資單查詢（薪資單列表 + 明細檢視）
+- 線上請假/加班申請（含取消功能）
+- 假別餘額查詢（Dashboard 快覽 + 請假頁內嵌）
+- 個人資料檢視（唯讀）
+- ESS 專用後端 API（/api/v1/ess/me、/ess/paystubs、/ess/paystubs/{id}）
+- LoginResponse 擴充 employeeId + role
 
 ### 階段依賴關係
 ```
@@ -95,8 +97,7 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
                                 ▼         ▼
                             Phase 5    Phase 6
 ```
-- Phase 1-5 已完成
-- Phase 6 可獨立開發
+- Phase 1-6 全部完成
 
 ## 3. 資料庫設計
 
@@ -206,6 +207,11 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
 - `GET /api/v1/reports/bank-transfer?periodId=` — 銀行轉帳檔下載（CSV）
 - `GET /api/v1/reports/export/payroll?periodId=` — 薪資總表 Excel 匯出
 
+**員工自助服務 (Phase 6)**
+- `GET /api/v1/ess/me` — 取得登入者資訊（含員工 Profile）
+- `GET /api/v1/ess/paystubs` — 查詢自己的薪資紀錄列表
+- `GET /api/v1/ess/paystubs/{recordId}` — 單筆薪資單明細（含自訂項目）
+
 ## 5. 前端架構
 
 ### 5.1 雙 Portal 結構
@@ -221,9 +227,15 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 4 ✅
 - Sidebar 分五區塊：人事、考勤、薪資、合規、報表
 
 **payroll-ess-portal**（員工自助服務）
-- Pages: Paystubs, Leaves, Overtime, Profile
-- Stores: authStore, leaveStore, paystubStore
-- 路由 `/ess/`
+- 首頁：Dashboard（個人摘要 + 假別餘額快覽）
+- 薪資單：PaystubList（薪資期間列表）, PaystubDetail（應發/應扣明細）
+- 請假管理：LeavePage（請假紀錄 + 新增表單 + 取消 + 假別餘額）
+- 加班管理：OvertimePage（加班紀錄 + 新增表單）
+- 個人資料：ProfilePage（唯讀個人資訊）
+- Stores: authStore（含 employeeId/role）
+- API 層：essApi（/ess/me, /ess/paystubs）、leaveApi、overtimeApi
+- 路由 `/ess/`，Vite base: '/ess/'
+- Sidebar 採 teal 色系區別 HR portal
 
 ### 5.2 共用邏輯
 - Phase 1 不急著抽取共用套件

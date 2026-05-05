@@ -9,4 +9,5 @@ public interface PayrollRecordRepository extends JpaRepository<PayrollRecord, Lo
     List<PayrollRecord> findByPeriodId(Long periodId);
     List<PayrollRecord> findByPeriodIdAndEmployeeIdIn(Long periodId, List<Long> employeeIds);
     List<PayrollRecord> findByPeriodIdIn(List<Long> periodIds);
+    List<PayrollRecord> findByEmployeeIdOrderByPeriodIdDesc(Long employeeId);
 }
