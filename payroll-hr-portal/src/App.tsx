@@ -16,6 +16,10 @@ import InsuranceRatePage from './pages/compliance/InsuranceRatePage';
 import TaxBracketPage from './pages/compliance/TaxBracketPage';
 import WithholdingPage from './pages/compliance/WithholdingPage';
 import WithholdingDetailPage from './pages/compliance/WithholdingDetail';
+import PayrollReport from './pages/reports/PayrollReport';
+import DepartmentCostReport from './pages/reports/DepartmentCostReport';
+import OvertimeTrendReport from './pages/reports/OvertimeTrendReport';
+import BankTransferPage from './pages/reports/BankTransferPage';
 
 function Dashboard() {
   return <div className="text-gray-600">歡迎使用薪資管理系統</div>;
@@ -49,6 +53,10 @@ export default function App() {
           <Route path="compliance/tax-brackets" element={<TaxBracketPage />} />
           <Route path="compliance/withholding" element={<WithholdingPage />} />
           <Route path="compliance/withholding/:id" element={<WithholdingDetailPage />} />
+          <Route path="reports/payroll" element={<PayrollReport />} />
+          <Route path="reports/department-cost" element={<DepartmentCostReport />} />
+          <Route path="reports/overtime-trend" element={<OvertimeTrendReport />} />
+          <Route path="reports/bank-transfer" element={<BankTransferPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

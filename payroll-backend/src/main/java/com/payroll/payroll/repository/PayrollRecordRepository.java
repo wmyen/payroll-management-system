@@ -8,4 +8,5 @@ import java.util.List;
 public interface PayrollRecordRepository extends JpaRepository<PayrollRecord, Long> {
     List<PayrollRecord> findByPeriodId(Long periodId);
     List<PayrollRecord> findByPeriodIdAndEmployeeIdIn(Long periodId, List<Long> employeeIds);
+    List<PayrollRecord> findByPeriodIdIn(List<Long> periodIds);
 }

@@ -24,6 +24,13 @@ const complianceItems = [
   { to: '/compliance/withholding', label: '扣繳憑單' },
 ];
 
+const reportItems = [
+  { to: '/reports/payroll', label: '薪資報表' },
+  { to: '/reports/department-cost', label: '部門成本' },
+  { to: '/reports/overtime-trend', label: '加班趨勢' },
+  { to: '/reports/bank-transfer', label: '銀行轉帳' },
+];
+
 export default function Sidebar() {
   return (
     <aside className="w-48 bg-gray-800 text-white min-h-screen p-4">
@@ -67,6 +74,18 @@ export default function Sidebar() {
         ))}
         <div className="mt-4 mb-2 px-3 text-xs text-gray-400 uppercase tracking-wider">合規管理</div>
         {complianceItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              `block px-3 py-2 rounded ${isActive ? 'bg-blue-600' : 'hover:bg-gray-700'}`
+            }
+          >
+            {item.label}
+          </NavLink>
+        ))}
+        <div className="mt-4 mb-2 px-3 text-xs text-gray-400 uppercase tracking-wider">報表分析</div>
+        {reportItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}

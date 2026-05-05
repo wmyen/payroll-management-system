@@ -108,6 +108,67 @@ export const complianceApi = {
   confirmAllWithholding: (year: number) => client.post<ApiResponse<void>>('/compliance/withholding/confirm-all', { year }),
 };
 
+export interface PayrollSummaryReport {
+  period: { id: number; year: number; month: number; startDate: string; endDate: string };
+  departments: {
+    departmentName: string;
+    employeeCount: number;
+    totalBaseSalary: number;
+    totalAllowances: number;
+    totalOvertimePay: number;
+    totalGrossPay: number;
+    totalDeductions: number;
+    totalNetPay: number;
+    totalEmployerCost: number;
+  }[];
+  grandTotal: {
+    employeeCount: number;
+    totalBaseSalary: number;
+    totalAllowances: number;
+    totalOvertimePay: number;
+    totalGrossPay: number;
+    totalDeductions: number;
+    totalNetPay: number;
+    totalEmployerCost: number;
+  };
+}
+
+export interface DepartmentCostReport {
+  year: number;
+  month: number | null;
+  departments: {
+    departmentName: string;
+    employeeCount: number;
+    totalNetPay: number;
+    totalEmployerCost: number;
+    percentage: number;
+  }[];
+  companyTotal: { totalNetPay: number; totalEmployerCost: number };
+}
+
+export interface OvertimeTrendReport {
+  year: number;
+  monthlyData: { month: number; totalOvertimePay: number; employeeCount: number }[];
+  yearTotal: { totalOvertimePay: number; avgPerMonth: number };
+}
+
+export interface BankTransferRecord {
+  bankAccount: string;
+  employeeName: string;
+  amount: number;
+}
+
+export const reportApi = {
+  payrollSummary: (periodId: number) =>
+    client.get<ApiResponse<PayrollSummaryReport>>('/reports/payroll-summary', { params: { periodId } }),
+  departmentCost: (year: number, month?: number) =>
+    client.get<ApiResponse<DepartmentCostReport>>('/reports/department-cost', { params: { year, month } }),
+  overtimeTrend: (year: number) =>
+    client.get<ApiResponse<OvertimeTrendReport>>('/reports/overtime-trend', { params: { year } }),
+  bankTransferUrl: (periodId: number) => `/api/v1/reports/bank-transfer?periodId=${periodId}`,
+  exportPayrollUrl: (periodId: number) => `/api/v1/reports/export/payroll?periodId=${periodId}`,
+};
+
 export const payrollApi = {
   // Periods
   listPeriods: () => client.get<ApiResponse<PayrollPeriod[]>>('/payroll/periods'),
