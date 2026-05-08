@@ -1,6 +1,5 @@
 package com.payroll.payroll.service;
 
-import com.payroll.department.domain.Department;
 import com.payroll.employee.domain.Employee;
 import com.payroll.employee.repository.EmployeeRepository;
 import com.payroll.payroll.domain.PayrollPeriod;
@@ -18,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayOutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -183,7 +181,7 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public String generateBankTransfer(Long periodId) {
-        PayrollPeriod period = payrollPeriodRepository.findById(periodId)
+        payrollPeriodRepository.findById(periodId)
                 .orElseThrow(() -> new EntityNotFoundException("Period not found: " + periodId));
 
         List<PayrollRecord> records = payrollRecordRepository.findByPeriodId(periodId);
@@ -210,7 +208,7 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public byte[] exportPayrollExcel(Long periodId) throws Exception {
-        PayrollPeriod period = payrollPeriodRepository.findById(periodId)
+        payrollPeriodRepository.findById(periodId)
                 .orElseThrow(() -> new EntityNotFoundException("Period not found: " + periodId));
 
         List<PayrollRecord> records = payrollRecordRepository.findByPeriodId(periodId);
