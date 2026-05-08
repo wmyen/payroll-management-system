@@ -76,6 +76,9 @@ logs/
 *.xlsx
 output/
 
+# MCP tools
+.playwright-mcp/
+
 # Temporary files
 tmp/
 temp/
