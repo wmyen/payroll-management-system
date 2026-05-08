@@ -2,7 +2,6 @@ package com.payroll.payroll.dto;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data

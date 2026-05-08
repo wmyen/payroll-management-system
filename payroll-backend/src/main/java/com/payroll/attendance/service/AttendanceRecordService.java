@@ -2,7 +2,6 @@ package com.payroll.attendance.service;
 
 import com.payroll.attendance.domain.AttendanceRecord;
 import com.payroll.attendance.domain.AttendanceStatus;
-import com.payroll.attendance.domain.Holiday;
 import com.payroll.attendance.domain.HolidayType;
 import com.payroll.attendance.repository.AttendanceRecordRepository;
 import com.payroll.attendance.repository.HolidayRepository;
@@ -56,7 +55,7 @@ public class AttendanceRecordService {
         List<AttendanceRecord> records = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            String header = reader.readLine(); // skip header
+            reader.readLine(); // skip header
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] cols = line.split(",");

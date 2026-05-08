@@ -25,7 +25,6 @@ import java.time.LocalTime;
 public class OvertimeService {
 
     private static final BigDecimal MAX_MONTHLY_HOURS = new BigDecimal("46");
-    private static final BigDecimal EXTENDED_MAX_HOURS = new BigDecimal("54");
     private static final BigDecimal HOURS_PER_MONTH = new BigDecimal("240");
 
     private static final BigDecimal RATE_WORKDAY_FIRST_2 = new BigDecimal("1.33");

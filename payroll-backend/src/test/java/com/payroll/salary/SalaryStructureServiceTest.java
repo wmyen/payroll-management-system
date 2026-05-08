@@ -2,7 +2,6 @@ package com.payroll.salary;
 
 import com.payroll.employee.domain.Employee;
 import com.payroll.employee.repository.EmployeeRepository;
-import com.payroll.salary.domain.Allowance;
 import com.payroll.salary.domain.AllowanceType;
 import com.payroll.salary.domain.SalaryStructure;
 import com.payroll.salary.dto.SalaryStructureRequest;
